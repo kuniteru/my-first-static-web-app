@@ -59,8 +59,9 @@
             }
             return response.json();
         }).then(result => {
-            //displayOutput(JSON.stringify(result));
-            //displayOutput(result.choices[0].message.content);
+            displayOutput(JSON.stringify(result));
+            displayOutput("*******************************\n")
+            displayOutput(result.choices[0].message.content);
             //return JSON.stringify(res);
             return result.choices[0].message.content;
         }).catch(error => {
