@@ -15,7 +15,7 @@
 
     <script src="https://alcdn.msauth.net/browser/2.35.0/js/msal-browser.min.js"></script>
     <script>
-    async function getOpenAIResponse(prompt, deploymentId, accessToken) {
+    function getOpenAIResponse(prompt, deploymentId, accessToken) {
         const endpoint = "https://test001-apim.azure-api.net";
         const openai_api_version = "2023-07-01-preview"
 
@@ -27,7 +27,7 @@
             mode: "no-cors",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${accessToken}`
+                "Authorization": "Bearer " + accessToken
             },
             body: JSON.stringify({
                 "messages":[
