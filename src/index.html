@@ -22,12 +22,31 @@
             clientId: "96e70f3b-cc1f-424a-bc81-3e7dcdc09ed5",
             authority: "https://login.microsoftonline.com/5e3960d0-e0b5-42d4-a532-406c36d40ed1",
             redirectUri: "https://localhost"
-        },
-        cache: {
-          cacheLocation: "localStorage"
         }
     };
 
+    const silentRequest = {
+        scopes: ["User.Read", "Mail.Read"],
+        loginHint: "asami@pnop.co.jp"
+    };
+
+    try {
+        const loginResponse = await msalInstance.ssoSilent(silentRequest);
+    } catch (err) {
+        if (err instanceof InteractionRequiredAuthError) {
+            const loginResponse = await msalInstance.loginPopup(silentRequest).catch(error => {
+                // handle error
+                alert("A");
+            });
+        } else {
+            // handle error
+            alert("B");
+        }
+    }    
+
+    alert(loginResponse);
+
+    /*
     const msalInstance = new msal.PublicClientApplication(msalConfig);
 
     // サインイン関数
@@ -73,6 +92,7 @@
         const { text } = await( await fetch(`/api/message`)).json();
         document.querySelector('#name').textContent = text;
     }());
+    */
     </script>
 </body>
 
