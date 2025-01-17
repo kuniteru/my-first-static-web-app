@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Vanilla JavaScript App</title>
+</head>
+
+<body>
+    <pre id="output"></pre>
+
+    <script src="https://alcdn.msauth.net/browser/2.35.0/js/msal-browser.min.js"></script>
+    <script>
+        function getOpenAIResponse(prompt, deploymentId, accessToken) {
+            const endpoint = "https://test001-apim.azure-api.net";
+            const openai_api_version = "2023-07-01-preview"
+
+            const body = {
+                messages: [
+                    {
+                        role: "system",
+                        content: "あなたはアシスタントです。"
+                    },
+                    {
+                        role: "user",
+                        content: prompt
+                    }
+                ]
+            };
+
+            fetch(`${endpoint}/test001-oai-entra/openai/deployments/${deploymentId}/chat/completions?api-version=${openai_api_version}`, {
+                method: "POST",
+                headers: {
+                    Authorization: 'Bearer ' + accessToken,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            }).then(result => {
+                displayOutput(result.choices[0].message.content);
+            }).catch(error => {
+                displayOutput("There has been a problem with your fetch operation: " + error);
+            });
+        }
+
+        // MSAL.js v2 exposes several account APIs, logic to determine which account to use is the responsibility of the developer
+        const account = publicClientApplication.getAllAccounts()[0];
+
+        const accessTokenRequest = {
+            scopes: ["openid", "profile", "email", "offline_access", "api://96e70f3b-cc1f-424a-bc81-3e7dcdc09ed5/Api.Call"],
+            account: account,
+        };
+
+        publicClientApplication
+            .acquireTokenSilent(accessTokenRequest)
+            .then(function (accessTokenResponse) {
+                // Acquire token silent success
+                let accessToken = accessTokenResponse.accessToken;
+
+                // 今日の月日を取得
+                const today = new Date();
+                const month = today.getMonth() + 1; // 月は0から始まるため、1を加算
+                const date = today.getDate();
+
+                prompt = `${month}月${date}日にあった過去の出来事は？`;
+                deploymentId = "gpt-4o-mini-mdl";
+                getOpenAIResponse(prompt, deploymentId, accessToken);
+            })
+            .catch(function (error) {
+                //Acquire token silent failure, and send an interactive request
+                if (error instanceof InteractionRequiredAuthError) {
+                    publicClientApplication
+                        .acquireTokenPopup(accessTokenRequest)
+                        .then(function (accessTokenResponse) {
+                            // Acquire token interactive success
+                            let accessToken = accessTokenResponse.accessToken;
+                            // Call your API with token
+                            callApi(accessToken);
+                        })
+                        .catch(function (error) {
+                            // Acquire token interactive failure
+                            console.log(error);
+                        });
+                }
+                console.log(error);
+            });
+    </script>
+</body>
+
+</html>
