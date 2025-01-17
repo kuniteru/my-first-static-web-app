@@ -56,7 +56,9 @@
             if (!response.ok) {
                 throw new Error("Network response was not ok");
             }
-            return (response.json()).choices[0].text;
+
+            //return (response.json()).choices[0].text;
+            return response.text();
         }).catch(error => {
             displayOutput("There has been a problem with your fetch operation: " + error);
             return error;
