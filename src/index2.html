@@ -13,6 +13,11 @@
 
     <script src="https://alcdn.msauth.net/browser/2.35.0/js/msal-browser.min.js"></script>
     <script>
+        function displayOutput(text) {
+            const output = document.getElementById("output");
+            output.innerText = output.textContent + "\n" + text;
+        }
+
         function getOpenAIResponse(prompt, deploymentId, accessToken) {
             const endpoint = "https://test001-apim.azure-api.net";
             const openai_api_version = "2023-07-01-preview"
@@ -62,6 +67,7 @@
             .then(function (accessTokenResponse) {
                 // Acquire token silent success
                 let accessToken = accessTokenResponse.accessToken;
+                displayOutput("Access Token: " + accessToken);
 
                 // 今日の月日を取得
                 const today = new Date();
