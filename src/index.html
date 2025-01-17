@@ -24,7 +24,6 @@
     function getOpenAIResponse(prompt, deploymentId, accessToken) {
         const endpoint = "https://test001-apim.azure-api.net";
         const openai_api_version = "2023-07-01-preview"
-        displayOutput(accessToken);
 
         fetch(`${endpoint}/test001-oai-entra/openai/deployments/${deploymentId}/chat/completions?api-version=${openai_api_version}`, {
             method: "POST",
@@ -57,10 +56,8 @@
                 throw new Error("Network response was not ok");
             }
 
-            //return (response.json()).choices[0].text;
-            const re = response.text();
-            displayOutput(re);
-            return re;
+            const res = response.json();
+            return res.choices[0].text;
         }).catch(error => {
             displayOutput("There has been a problem with your fetch operation: " + error);
             return error;
