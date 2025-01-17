@@ -88,6 +88,31 @@
         prompt = `${month}月${date}日にあった過去の出来事は？`;
         deploymentId = "gpt-4o-mini-mdl";
 
+        const redirectResponse = await msalInstance.handleRedirectPromise();
+        if (redirectResponse !== null) {
+            getOpenAIResponse(prompt, deploymentId, redirectResponse.accessToken);
+        } else {
+            const account = msalInstance.getAllAccounts()[0];
+
+            msalInstance
+                .acquireTokenSilent(accessTokenRequest)
+                .then(function (accessTokenResponse) {
+                    // Acquire token silent success
+                    displayOutput("Silent token acquisition successful.");
+                    let accessToken = accessTokenResponse.accessToken;
+
+                    getOpenAIResponse(prompt, deploymentId, accessToken);
+                })
+                .catch(function (error) {
+                    displayOutput("Silent token acquisition fails. Acquiring token using popup or redirect. \n" + error);
+                    //Acquire token silent failure, and send an interactive request
+                    //if (error instanceof InteractionRequiredAuthError) {
+                        msalInstance.acquireTokenRedirect(accessTokenRequest);
+                    //
+                });
+        }
+
+        /*
         msalInstance
             .acquireTokenSilent(accessTokenRequest)
             .then(function (accessTokenResponse) {
@@ -102,8 +127,7 @@
                 //Acquire token silent failure, and send an interactive request
                 //if (error instanceof InteractionRequiredAuthError) {
                     msalInstance
-                        .acquireTokenRedirect(accessTokenRequest)
-                        //.acquireTokenPopup(accessTokenRequest)
+                        .acquireTokenPopup(accessTokenRequest)
                         .then(function (accessTokenResponse) {
                             // Acquire token interactive success
                             let accessToken = accessTokenResponse.accessToken;
@@ -116,6 +140,7 @@
                         });
                 //}
             });
+        */
     </script>
 </body>
 
