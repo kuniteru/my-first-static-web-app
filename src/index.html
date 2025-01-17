@@ -15,6 +15,26 @@
 
     <script src="https://alcdn.msauth.net/browser/2.35.0/js/msal-browser.min.js"></script>
     <script>
+    async function getOpenAIResponse(prompt, deploymentId, accessToken) {
+        const endpoint = "https://test001-apim.azure-api.net";
+        const openai_api_version = "2023-07-01-preview"
+
+        const response = await fetch(`${endpoint}/openai/deployments/${deploymentId}/completions?api-version=${openai_api_version}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${accessToken}`
+            },
+            body: JSON.stringify({
+                prompt: prompt,
+                max_tokens: 100
+            })
+        });
+
+        const data = await response.json();
+        return data.choices[0].text;
+    }
+
     async function executeSilentRequest() {
         // MSALの設定
         const msalConfig = {
@@ -33,19 +53,30 @@
         const msalInstance = new msal.PublicClientApplication(msalConfig);
         const loginResponse = await msalInstance.loginPopup(silentRequest)
             .then(function (loginResponse) {
-                alert("id_token: " + loginResponse.idToken.rawIdToken + "\n"
-                    + "access_token: " + loginResponse.accessToken
-                );
-                //Login Success
-                console.log("id_token acquired at: " + new Date().toString());
-                console.log(loginResponse);
-                console.log("id_token: " + loginResponse.idToken.rawIdToken);
-                console.log("access_token: " + loginResponse.accessToken);
+                alert(loginResponse.accessToken);
+                const accessToken = loginResponse.accessToken;
+                
+
+                // 今日の月日を取得
+                const today = new Date();
+                const month = today.getMonth() + 1; // 月は0から始まるため、1を加算
+                const date = today.getDate();
+
+                prompt = `${month}月${date}日に起こった過去の出来事は？`;
+                deploymentId = "gpt-4o-mini-mdl";
+                getOpenAIResponse(prompt, deploymentId, accessToken)
+                    .then(function (response) {
+                        // API Response
+                        alert(prompt + ": \n" + response);
+                    }).catch(function (error) {
+                        // API Request Failure
+                        alert(error);
+                    });
+
             }).catch(function (error) {
                 //Login Failure
-                console.log(error);
+                alert(error);
             });
-        //const loginResponse = await msalInstance.ssoSilent(silentRequest);
     }
 
     executeSilentRequest();
