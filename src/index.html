@@ -15,6 +15,56 @@
     </main>
 
     <script>
+    // MSALの設定
+    const msalConfig = {
+        auth: {
+            clientId: "96e70f3b-cc1f-424a-bc81-3e7dcdc09ed5",
+            authority: "https://login.microsoftonline.com/5e3960d0-e0b5-42d4-a532-406c36d40ed1",
+            redirectUri: "https://localhost"
+        }
+    };
+
+    const msalInstance = new msal.PublicClientApplication(msalConfig);
+
+    // サインイン関数
+    async function signIn() {
+        const loginRequest = {
+            scopes: ["email offline_access openid profile User.Read"],
+        };
+
+        try {
+            const loginResponse = await msalInstance.loginPopup(loginRequest);
+            alert("id_token acquired at: " + new Date().toString());
+            alert(loginResponse);
+            return loginResponse.accessToken;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    // API呼び出し関数
+    async function callApi(accessToken) {
+        const headers = new Headers();
+        const bearer = `Bearer ${accessToken}`;
+
+        headers.append("Authorization", bearer);
+
+        const options = {
+            method: "GET",
+            headers: headers
+        };
+
+        const response = await fetch("https://test001-apim.azure-api.net/test001-oai-entra/openai/deployments/gpt-4o-mini-mdl/chat/completions?api-version=2024-06-01", options);
+        const data = await response.json();
+        console.log(data);
+    }
+
+    // サインインしてAPIを呼び出す
+    signIn().then(accessToken => {
+        callApi(accessToken);
+    });
+
+
     (async function() {
         const { text } = await( await fetch(`/api/message`)).json();
         document.querySelector('#name').textContent = text;
