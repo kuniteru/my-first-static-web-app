@@ -28,18 +28,6 @@
         const body = {
             messages:[
                 {
-                    role:"system",
-                    content:"You are a helpful assistant."
-                },
-                {
-                    role:"user",
-                    content:"Does Azure OpenAI support customer managed keys?"
-                },
-                {
-                    role:"assistant",
-                    content:"Yes, customer managed keys are supported by Azure OpenAI."
-                },
-                {
                     role:"user",
                     content:prompt
                 }
@@ -59,14 +47,12 @@
             }
             return response.json();
         }).then(result => {
-            displayOutput(JSON.stringify(result));
-            displayOutput("*******************************\n")
             displayOutput(result.choices[0].message.content);
             //return JSON.stringify(res);
-            return result.choices[0].message.content;
+            return result;;
         }).catch(error => {
-            displayOutput("There has been a problem with your fetch operation: " + error);
-            return error;
+            //displayOutput("There has been a problem with your fetch operation: " + error);
+            return "There has been a problem with your fetch operation: " + error;
         });
     }
 
@@ -95,7 +81,9 @@
 
         prompt = `${month}月${date}日に起こった過去の出来事は？`;
         deploymentId = "gpt-4o-mini-mdl";
-        displayOutput(getOpenAIResponse(prompt, deploymentId, accessToken));
+        const result = getOpenAIResponse(prompt, deploymentId, accessToken);
+        displayOutput("\n******************************************\n");
+        displayOutput(result.choices[0].message.content);
     }
 
     executeSilentRequest();
