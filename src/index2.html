@@ -13,6 +13,9 @@
 
     <script src="https://alcdn.msauth.net/browser/2.35.0/js/msal-browser.min.js"></script>
     <script>
+        // https://learn.microsoft.com/ja-jp/entra/identity-platform/msal-js-sso
+        // https://learn.microsoft.com/ja-jp/entra/identity-platform/scenario-spa-sign-in?tabs=javascript2
+        // https://learn.microsoft.com/ja-jp/entra/identity-platform/scenario-spa-acquire-token?tabs=javascript2
         function displayOutput(text) {
             const output = document.getElementById("output");
             output.innerText = output.textContent + "\n" + text;
@@ -60,10 +63,12 @@
                 clientId: "96e70f3b-cc1f-424a-bc81-3e7dcdc09ed5",
                 authority: "https://login.microsoftonline.com/5e3960d0-e0b5-42d4-a532-406c36d40ed1"
             },
+            /*
             cache: {
                 cacheLocation: "localStorage",
                 storeAuthStateInCookie: false
             }
+            */
         };
 
         const msalInstance = new msal.PublicClientApplication(msalConfig);
@@ -88,7 +93,7 @@
             .then(function (accessTokenResponse) {
                 // Acquire token silent success
                 let accessToken = accessTokenResponse.accessToken;
-                displayOutput("Access Token: " + accessToken);
+
                 getOpenAIResponse(prompt, deploymentId, accessToken);
             })
             .catch(function (error) {
@@ -99,8 +104,7 @@
                         .then(function (accessTokenResponse) {
                             // Acquire token interactive success
                             let accessToken = accessTokenResponse.accessToken;
-                            displayOutput("Access Token: " + accessToken);
-                            
+
                             getOpenAIResponse(accessToken);
                         })
                         .catch(function (error) {
