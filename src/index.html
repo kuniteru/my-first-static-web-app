@@ -16,22 +16,24 @@
 
     <script src="https://alcdn.msauth.net/browser/2.35.0/js/msal-browser.min.js"></script>
     <script>
-    // MSALの設定
-    const msalConfig = {
-        auth: {
-            clientId: "96e70f3b-cc1f-424a-bc81-3e7dcdc09ed5",
-            authority: "https://login.microsoftonline.com/5e3960d0-e0b5-42d4-a532-406c36d40ed1",
-            redirectUri: "https://localhost"
-        }
-    };
-
-    const silentRequest = {
-        scopes: ["User.Read", "Mail.Read"],
-        loginHint: "asami@pnop.co.jp"
-    };
-
+    
     async function executeSilentRequest() {
         try {
+            // MSALの設定
+            const msalConfig = {
+                auth: {
+                    clientId: "96e70f3b-cc1f-424a-bc81-3e7dcdc09ed5",
+                    authority: "https://login.microsoftonline.com/5e3960d0-e0b5-42d4-a532-406c36d40ed1",
+                    redirectUri: "https://localhost"
+                }
+            };
+
+            const silentRequest = {
+                scopes: ["User.Read", "Mail.Read"],
+                loginHint: "asami@pnop.co.jp"
+            };
+
+            const msalInstance = new msal.PublicClientApplication(config);
             const loginResponse = await msalInstance.ssoSilent(silentRequest);
             alert(loginResponse);
         } catch (err) {
