@@ -29,7 +29,7 @@
         fetch(`${endpoint}/test001-oai-entra/openai/deployments/${deploymentId}/chat/completions?api-version=${openai_api_version}`, {
             method: "POST",
             headers: {
-                Authorization: 'Bearer' + accessToken,
+                Authorization: 'Bearer ' + accessToken,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
