@@ -25,32 +25,36 @@
         const endpoint = "https://test001-apim.azure-api.net";
         const openai_api_version = "2023-07-01-preview"
 
+        const body = {
+            messages:[
+                {
+                    role:"system",
+                    content:"You are a helpful assistant."
+                },
+                {
+                    role:"user",
+                    content:"Does Azure OpenAI support customer managed keys?"
+                },
+                {
+                    role:"assistant",
+                    content:"Yes, customer managed keys are supported by Azure OpenAI."
+                },
+                {
+                    role:"user",
+                    content:"What is the pricing model for Azure OpenAI?"
+                }
+            ]
+        };
+
+        displayOutput(JSON.stringify(body));
+
         fetch(`${endpoint}/test001-oai-entra/openai/deployments/${deploymentId}/chat/completions?api-version=${openai_api_version}`, {
             method: "POST",
             headers: {
                 Authorization: 'Bearer ' + accessToken,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                messages:[
-                    {
-                        role:"system",
-                        content:"You are a helpful assistant."
-                    },
-                    {
-                        role:"user",
-                        content:"Does Azure OpenAI support customer managed keys?"
-                    },
-                    {
-                        role:"assistant",
-                        content:"Yes, customer managed keys are supported by Azure OpenAI."
-                    },
-                    {
-                        role:"user",
-                        content:"What is the pricing model for Azure OpenAI?"
-                    }
-                ]
-            })
+            body: JSON.stringify(body)
         }).then(response => {
             if (!response.ok) {
                 throw new Error("Network response was not ok");
