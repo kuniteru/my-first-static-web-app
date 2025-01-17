@@ -69,10 +69,9 @@
             //sid: sid
         };
 
-        displayOutput("********" + document.cookie);
-
         const msalInstance = new msal.PublicClientApplication(msalConfig);
-        const loginResponse = await msalInstance.loginPopup(silentRequest)
+        //const loginResponse = await msalInstance.loginPopup(silentRequest)
+        const loginResponse = await msalInstance.loginRedirect(silentRequest)
         const accessToken = loginResponse.accessToken;
 
         // 今日の月日を取得
