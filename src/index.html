@@ -10,7 +10,7 @@
 
 <body>
     <main>
-    <h1>3Vanilla JavaScript App</h1>
+    <h1>4</h1>
     </main>
     <pre id="output"></pre>
 
@@ -31,6 +31,7 @@
             mode: "no-cors",
             headers: {
                 Authorization: 'Bearer abcdefg',
+                'X-MY-DUMMY': accessToken,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
