@@ -20,6 +20,7 @@
         const openai_api_version = "2023-07-01-preview"
 
         document.writeln(accessToken);
+        document.writeln(`${endpoint}/test001-oai-entra/openai/deployments/${deploymentId}/chat/completions?api-version=${openai_api_version}`);
 
         const response = await fetch(`${endpoint}/test001-oai-entra/openai/deployments/${deploymentId}/chat/completions?api-version=${openai_api_version}`, {
             method: "POST",
