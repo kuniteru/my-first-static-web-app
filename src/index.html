@@ -19,6 +19,8 @@
         const endpoint = "https://test001-apim.azure-api.net";
         const openai_api_version = "2023-07-01-preview"
 
+        document.writeln(accessToken);
+
         const response = await fetch(`${endpoint}/openai/deployments/${deploymentId}/completions?api-version=${openai_api_version}`, {
             method: "POST",
             mode: "no-cors",
@@ -64,7 +66,7 @@
         prompt = `${month}月${date}日に起こった過去の出来事は？`;
         deploymentId = "gpt-4o-mini-mdl";
         response = getOpenAIResponse(prompt, deploymentId, accessToken);
-        document.write(response);
+        document.writeln(response);
     }
 
     executeSilentRequest();
