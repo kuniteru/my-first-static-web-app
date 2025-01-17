@@ -59,15 +59,12 @@
             if (!response.ok) {
                 throw new Error("Network response was not ok");
             }
-            return response;
-        /*
             return response.json();
         }).then(result => {
             displayOutput(JSON.stringify(result));
             displayOutput(result.choices[0].message.content);
             //return JSON.stringify(res);
             return result.choices[0].message.content;
-        */
         }).catch(error => {
             displayOutput("There has been a problem with your fetch operation: " + error);
             return error;
@@ -99,11 +96,7 @@
 
         prompt = `${month}月${date}日に起こった過去の出来事は？`;
         deploymentId = "gpt-4o-mini-mdl";
-        const response = getOpenAIResponse(prompt, deploymentId, accessToken);
-        if (!response.ok) {
-            const data = await response.json();
-            displayOutput(data.choices[0].message.content);
-        }
+        getOpenAIResponse(prompt, deploymentId, accessToken);
     }
 
     executeSilentRequest();
