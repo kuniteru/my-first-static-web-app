@@ -59,7 +59,8 @@
         const msalConfig = {
             auth: {
                 clientId: "96e70f3b-cc1f-424a-bc81-3e7dcdc09ed5",
-                authority: "https://login.microsoftonline.com/5e3960d0-e0b5-42d4-a532-406c36d40ed1"
+                authority: "https://login.microsoftonline.com/5e3960d0-e0b5-42d4-a532-406c36d40ed1",
+                redirectUri: "https://ashy-wave-00dc01500.4.azurestaticapps.net"
             }
         };
 
@@ -70,8 +71,8 @@
         };
 
         const msalInstance = new msal.PublicClientApplication(msalConfig);
-        //const loginResponse = await msalInstance.loginPopup(silentRequest)
-        const loginResponse = await msalInstance.loginRedirect(silentRequest)
+        //const loginResponse = await msalInstance.loginPopup(silentRequest);
+        const loginResponse = await msalInstance.loginRedirect(silentRequest);
         const accessToken = loginResponse.accessToken;
 
         // 今日の月日を取得
