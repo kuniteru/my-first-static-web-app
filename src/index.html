@@ -10,7 +10,7 @@
 
 <body>
     <main>
-    <h1>Vanilla JavaScript App</h1>
+    <h1>2Vanilla JavaScript App</h1>
     </main>
 
     <script src="https://alcdn.msauth.net/browser/2.35.0/js/msal-browser.min.js"></script>
@@ -31,9 +31,21 @@
         };
 
         const msalInstance = new msal.PublicClientApplication(msalConfig);
-        const loginResponse = await msalInstance.loginPopup(silentRequest);
+        const loginResponse = await msalInstance.loginPopup(silentRequest)
+            .then(function (loginResponse) {
+                alert("id_token: " + loginResponse.idToken.rawIdToken + "\n"
+                    + "access_token: " + loginResponse.accessToken
+                );
+                //Login Success
+                console.log("id_token acquired at: " + new Date().toString());
+                console.log(loginResponse);
+                console.log("id_token: " + loginResponse.idToken.rawIdToken);
+                console.log("access_token: " + loginResponse.accessToken);
+            }).catch(function (error) {
+                //Login Failure
+                console.log(error);
+            });
         //const loginResponse = await msalInstance.ssoSilent(silentRequest);
-        alert(loginResponse);
     }
 
     executeSilentRequest();
