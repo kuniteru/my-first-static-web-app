@@ -22,7 +22,7 @@
         document.writeln(accessToken);
         document.writeln(`${endpoint}/test001-oai-entra/openai/deployments/${deploymentId}/chat/completions?api-version=${openai_api_version}`);
 
-        const response = await fetch(`${endpoint}/test001-oai-entra/openai/deployments/${deploymentId}/chat/completions?api-version=${openai_api_version}`, {
+        fetch(`${endpoint}/test001-oai-entra/openai/deployments/${deploymentId}/chat/completions?api-version=${openai_api_version}`, {
             method: "POST",
             mode: "no-cors",
             headers: {
@@ -49,11 +49,16 @@
                     }
                 ]
             })
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            alert(response.text());
+            return (response.json()).choices[0].text;
+        }).catch(error => {
+            alert("There has been a problem with your fetch operation:", error);
+            return error;
         });
-        const temp = await response.text();
-        alert(temp);
-        const data = await response.json();
-        return data.choices[0].text;
     }
 
     async function executeSilentRequest() {
