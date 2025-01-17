@@ -41,12 +41,10 @@
                 },
                 {
                     role:"user",
-                    content:"What is the pricing model for Azure OpenAI?"
+                    content:prompt
                 }
             ]
         };
-
-        displayOutput(JSON.stringify(body));
 
         fetch(`${endpoint}/test001-oai-entra/openai/deployments/${deploymentId}/chat/completions?api-version=${openai_api_version}`, {
             method: "POST",
@@ -61,8 +59,8 @@
             }
             return response.json();
         }).then(result => {
-            displayOutput(JSON.stringify(result));
-            displayOutput(result.choices[0].message.content);
+            //displayOutput(JSON.stringify(result));
+            //displayOutput(result.choices[0].message.content);
             //return JSON.stringify(res);
             return result.choices[0].message.content;
         }).catch(error => {
@@ -96,7 +94,7 @@
 
         prompt = `${month}月${date}日に起こった過去の出来事は？`;
         deploymentId = "gpt-4o-mini-mdl";
-        getOpenAIResponse(prompt, deploymentId, accessToken);
+        displayOutput(getOpenAIResponse(prompt, deploymentId, accessToken));
     }
 
     executeSilentRequest();
