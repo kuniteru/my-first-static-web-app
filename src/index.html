@@ -29,8 +29,24 @@
                 "Authorization": `Bearer ${accessToken}`
             },
             body: JSON.stringify({
-                prompt: prompt,
-                max_tokens: 100
+                "messages":[
+                    {
+                        "role":"system",
+                        "content":"You are a helpful assistant."
+                    },
+                    {
+                        "role":"user",
+                        "content":"Does Azure OpenAI support customer managed keys?"
+                    },
+                    {
+                        "role":"assistant",
+                        "content":"Yes, customer managed keys are supported by Azure OpenAI."
+                    },
+                    {
+                        "role":"user",
+                        "content":`${prompt}`
+                    }
+                ]
             })
         });
         const temp = await response.text();
