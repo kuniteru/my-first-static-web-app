@@ -103,7 +103,7 @@
                 //Acquire token silent failure, and send an interactive request
                 //if (error instanceof InteractionRequiredAuthError) {
                     msalInstance
-                        .acquireTokenPopup(accessTokenRequest)
+                        .acquireTokenRedirect(accessTokenRequest)
                         .then(function (accessTokenResponse) {
                             // Acquire token interactive success
                             let accessToken = accessTokenResponse.accessToken;
