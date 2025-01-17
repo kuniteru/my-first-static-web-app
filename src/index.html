@@ -18,7 +18,7 @@
     <script>
     
     async function executeSilentRequest() {
-        try {
+        //try {
             // MSALの設定
             const msalConfig = {
                 auth: {
@@ -33,10 +33,10 @@
                 loginHint: "asami@pnop.co.jp"
             };
 
-            const msalInstance = new msal.PublicClientApplication(config);
+            const msalInstance = new msal.PublicClientApplication(msalConfig);
             const loginResponse = await msalInstance.ssoSilent(silentRequest);
             alert(loginResponse);
-        } catch (err) {
+        //} catch (err) {
             /*
             if (err instanceof InteractionRequiredAuthError) {
                 const loginResponse = await msalInstance.loginPopup(silentRequest).catch(error => {
@@ -48,8 +48,8 @@
                 alert("B" + err.message);
             }
             */
-            alert("Error:" + err.message);
-        }    
+        //    alert("Error:" + err.message);
+        //}    
 
     }
 
