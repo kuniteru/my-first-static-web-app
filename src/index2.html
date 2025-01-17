@@ -97,7 +97,7 @@
                 getOpenAIResponse(prompt, deploymentId, accessToken);
             })
             .catch(function (error) {
-                displayOutput("Silent token acquisition fails. Acquiring token using popup or redirect.");
+                displayOutput("Silent token acquisition fails. Acquiring token using popup or redirect. \n" + error);
                 //Acquire token silent failure, and send an interactive request
                 //if (error instanceof InteractionRequiredAuthError) {
                     msalInstance.acquireTokenRedirect(accessTokenRequest);
