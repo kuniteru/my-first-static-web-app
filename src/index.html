@@ -31,7 +31,8 @@
                 max_tokens: 100
             })
         });
-
+        const temp = await response.text();
+        alert(temp);
         const data = await response.json();
         return data.choices[0].text;
     }
@@ -53,23 +54,17 @@
 
         const msalInstance = new msal.PublicClientApplication(msalConfig);
         const loginResponse = await msalInstance.loginPopup(silentRequest)
-            .then(function (loginResponse) {
-                const accessToken = loginResponse.accessToken;
+        const accessToken = loginResponse.accessToken;
 
-                // 今日の月日を取得
-                const today = new Date();
-                const month = today.getMonth() + 1; // 月は0から始まるため、1を加算
-                const date = today.getDate();
+        // 今日の月日を取得
+        const today = new Date();
+        const month = today.getMonth() + 1; // 月は0から始まるため、1を加算
+        const date = today.getDate();
 
-                prompt = `${month}月${date}日に起こった過去の出来事は？`;
-                deploymentId = "gpt-4o-mini-mdl";
-                response = getOpenAIResponse(prompt, deploymentId, accessToken);
-                document.write(response);
-
-            }).catch(function (error) {
-                //Login Failure
-                document.write("ERROR: " + error);
-            });
+        prompt = `${month}月${date}日に起こった過去の出来事は？`;
+        deploymentId = "gpt-4o-mini-mdl";
+        response = getOpenAIResponse(prompt, deploymentId, accessToken);
+        document.write(response);
     }
 
     executeSilentRequest();
