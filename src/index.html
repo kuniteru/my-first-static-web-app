@@ -58,7 +58,9 @@
             }
 
             //return (response.json()).choices[0].text;
-            return response.text();
+            const re = resopnse.text();
+            displayOutput(re);
+            return re;
         }).catch(error => {
             displayOutput("There has been a problem with your fetch operation: " + error);
             return error;
