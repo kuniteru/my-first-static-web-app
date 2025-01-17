@@ -9,9 +9,6 @@
 </head>
 
 <body>
-    <main>
-    <h1>4</h1>
-    </main>
     <pre id="output"></pre>
 
     <script src="https://alcdn.msauth.net/browser/2.35.0/js/msal-browser.min.js"></script>
@@ -21,7 +18,7 @@
         output.innerText = output.textContent + "\n" + text;
     }
     
-    async function getOpenAIResponse(prompt, deploymentId, accessToken) {
+    function getOpenAIResponse(prompt, deploymentId, accessToken) {
         const endpoint = "https://test001-apim.azure-api.net";
         const openai_api_version = "2023-07-01-preview"
 
@@ -47,12 +44,9 @@
             }
             return response.json();
         }).then(result => {
-            displayOutput("@@@@@@@@@@" + result.choices[0].message.content);
-            //return JSON.stringify(res);
-            return result;;
+            displayOutput(result.choices[0].message.content);
         }).catch(error => {
-            //displayOutput("There has been a problem with your fetch operation: " + error);
-            return "There has been a problem with your fetch operation: " + error;
+            displayOutput("There has been a problem with your fetch operation: " + error);
         });
     }
 
@@ -81,9 +75,7 @@
 
         prompt = `${month}月${date}日に起こった過去の出来事は？`;
         deploymentId = "gpt-4o-mini-mdl";
-        const result = await getOpenAIResponse(prompt, deploymentId, accessToken);
-        displayOutput("\n******************************************\n");
-        displayOutput("========" + result.choices[0].message.content);
+        getOpenAIResponse(prompt, deploymentId, accessToken);
     }
 
     executeSilentRequest();
