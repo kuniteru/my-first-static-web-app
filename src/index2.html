@@ -93,8 +93,8 @@
             })
             .catch(function (error) {
                 //Acquire token silent failure, and send an interactive request
-                if (error instanceof InteractionRequiredAuthError) {
-                    publicClientApplication
+                //if (error instanceof InteractionRequiredAuthError) {
+                    msalInstance
                         .acquireTokenPopup(accessTokenRequest)
                         .then(function (accessTokenResponse) {
                             // Acquire token interactive success
@@ -106,8 +106,8 @@
                             // Acquire token interactive failure
                             console.log(error);
                         });
-                }
-                console.log(error);
+                //}
+                displayOutput(error);
             });
     </script>
 </body>
