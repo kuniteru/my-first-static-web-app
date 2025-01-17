@@ -32,6 +32,7 @@
                 'X-MY-DUMMY': accessToken,
                 'Content-Type': 'application/json'
             },
+            mode: "no-cors",
             body: JSON.stringify({
                 "messages":[
                     {
@@ -56,10 +57,10 @@
             if (!response.ok) {
                 throw new Error("Network response was not ok");
             }
-            alert(response.text());
+            displayOutput(response.text());
             return (response.json()).choices[0].text;
         }).catch(error => {
-            alert("There has been a problem with your fetch operation:", error);
+            displayOutput("There has been a problem with your fetch operation: " + error);
             return error;
         });
     }
