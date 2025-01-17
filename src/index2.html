@@ -100,10 +100,9 @@
                 displayOutput("Silent token acquisition fails. Acquiring token using popup or redirect. \n" + error);
                 //Acquire token silent failure, and send an interactive request
                 //if (error instanceof InteractionRequiredAuthError) {
-                    msalInstance.acquireTokenRedirect(accessTokenRequest);
-                    /*
                     msalInstance
-                        .acquireTokenPopup(accessTokenRequest)
+                        .acquireTokenRedirect(accessTokenRequest)
+                        //.acquireTokenPopup(accessTokenRequest)
                         .then(function (accessTokenResponse) {
                             // Acquire token interactive success
                             let accessToken = accessTokenResponse.accessToken;
@@ -114,9 +113,7 @@
                             // Acquire token interactive failure
                             console.log(error);
                         });
-                    */
                 //}
-                //displayOutput(error);
             });
     </script>
 </body>
