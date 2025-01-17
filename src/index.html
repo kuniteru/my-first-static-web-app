@@ -21,7 +21,7 @@
 
         document.writeln(accessToken);
 
-        const response = await fetch(`${endpoint}/openai/deployments/${deploymentId}/chat/completions?api-version=${openai_api_version}`, {
+        const response = await fetch(`${endpoint}/test001-oai-entra/openai/deployments/${deploymentId}/chat/completions?api-version=${openai_api_version}`, {
             method: "POST",
             mode: "no-cors",
             headers: {
