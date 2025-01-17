@@ -75,20 +75,20 @@
             account: account,
         };
 
+        // 今日の月日を取得
+        const today = new Date();
+        const month = today.getMonth() + 1; // 月は0から始まるため、1を加算
+        const date = today.getDate();
+
+        prompt = `${month}月${date}日にあった過去の出来事は？`;
+        deploymentId = "gpt-4o-mini-mdl";
+
         msalInstance
             .acquireTokenSilent(accessTokenRequest)
             .then(function (accessTokenResponse) {
                 // Acquire token silent success
                 let accessToken = accessTokenResponse.accessToken;
                 displayOutput("Access Token: " + accessToken);
-
-                // 今日の月日を取得
-                const today = new Date();
-                const month = today.getMonth() + 1; // 月は0から始まるため、1を加算
-                const date = today.getDate();
-
-                prompt = `${month}月${date}日にあった過去の出来事は？`;
-                deploymentId = "gpt-4o-mini-mdl";
                 getOpenAIResponse(prompt, deploymentId, accessToken);
             })
             .catch(function (error) {
@@ -99,8 +99,9 @@
                         .then(function (accessTokenResponse) {
                             // Acquire token interactive success
                             let accessToken = accessTokenResponse.accessToken;
-                            // Call your API with token
-                            callApi(accessToken);
+                            displayOutput("Access Token: " + accessToken);
+                            
+                            getOpenAIResponse(accessToken);
                         })
                         .catch(function (error) {
                             // Acquire token interactive failure
