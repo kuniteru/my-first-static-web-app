@@ -21,6 +21,7 @@
 
         const response = await fetch(`${endpoint}/openai/deployments/${deploymentId}/completions?api-version=${openai_api_version}`, {
             method: "POST",
+            mode: "no-cors",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${accessToken}`
