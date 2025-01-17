@@ -30,21 +30,25 @@
         loginHint: "asami@pnop.co.jp"
     };
 
-    try {
-        const loginResponse = await msalInstance.ssoSilent(silentRequest);
-    } catch (err) {
-        if (err instanceof InteractionRequiredAuthError) {
-            const loginResponse = await msalInstance.loginPopup(silentRequest).catch(error => {
+    async function executeSilentRequest() {
+        try {
+            const loginResponse = await msalInstance.ssoSilent(silentRequest);
+        } catch (err) {
+            if (err instanceof InteractionRequiredAuthError) {
+                const loginResponse = await msalInstance.loginPopup(silentRequest).catch(error => {
+                    // handle error
+                    alert("A");
+                });
+            } else {
                 // handle error
-                alert("A");
-            });
-        } else {
-            // handle error
-            alert("B");
-        }
-    }    
+                alert("B");
+            }
+        }    
 
-    alert(loginResponse);
+        alert(loginResponse);
+    }
+
+    executeSilentRequest();
 
     /*
     const msalInstance = new msal.PublicClientApplication(msalConfig);
