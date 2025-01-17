@@ -60,18 +60,24 @@
             auth: {
                 clientId: "96e70f3b-cc1f-424a-bc81-3e7dcdc09ed5",
                 authority: "https://login.microsoftonline.com/5e3960d0-e0b5-42d4-a532-406c36d40ed1"
+            },
+            cache: {
+                cacheLocation: "localStorage",
+                //storeAuthStateInCookie: false
             }
         };
 
         const silentRequest = {
             scopes: ["openid", "profile", "email", "offline_access", "api://96e70f3b-cc1f-424a-bc81-3e7dcdc09ed5/Api.Call"],
-            loginHint: "asami@pnop.co.jp"
+            //loginHint: "asami@pnop.co.jp"
             //sid: sid
         };
 
         const msalInstance = new msal.PublicClientApplication(msalConfig);
-        const loginResponse = await msalInstance.loginPopup(silentRequest);
-        const accessToken = loginResponse.accessToken;
+        //const loginResponse = await msalInstance.loginPopup(silentRequest);
+        //const accessToken = loginResponse.accessToken;
+        accessToken = await msalInstance.acquireTokenSilent(silentRequest);
+        displayOutput(accessToken.accessToken);
 
         // 今日の月日を取得
         const today = new Date();
