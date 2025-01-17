@@ -61,6 +61,8 @@
             }
 
             const res = response.json();
+            displayOutput(JSON.stringify(response.json()));
+            displayOutput(JSON.stringify(res));
             displayOutput(res.choices[0].message.content);
             //return JSON.stringify(res);
             return res.choices[0].message.content;
