@@ -26,10 +26,10 @@
         const openai_api_version = "2023-07-01-preview"
 
         const body = {
-            messages:[
+            messages: [
                 {
-                    role:"user",
-                    content:prompt
+                    role: "user",
+                    content: prompt
                 }
             ]
         };
@@ -47,7 +47,7 @@
             }
             return response.json();
         }).then(result => {
-            displayOutput(result.choices[0].message.content);
+            displayOutput("@@@@@@@@@@" + result.choices[0].message.content);
             //return JSON.stringify(res);
             return result;;
         }).catch(error => {
@@ -81,9 +81,9 @@
 
         prompt = `${month}月${date}日に起こった過去の出来事は？`;
         deploymentId = "gpt-4o-mini-mdl";
-        const result = getOpenAIResponse(prompt, deploymentId, accessToken);
+        const result = await getOpenAIResponse(prompt, deploymentId, accessToken);
         displayOutput("\n******************************************\n");
-        displayOutput(result.choices[0].message.content);
+        displayOutput("========" + result.choices[0].message.content);
     }
 
     executeSilentRequest();
