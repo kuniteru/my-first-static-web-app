@@ -21,7 +21,7 @@
         output.innerText = output.textContent + "\n" + text;
     }
     
-    function getOpenAIResponse(prompt, deploymentId, accessToken) {
+    async function getOpenAIResponse(prompt, deploymentId, accessToken) {
         const endpoint = "https://test001-apim.azure-api.net";
         const openai_api_version = "2023-07-01-preview"
 
