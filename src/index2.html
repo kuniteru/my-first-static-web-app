@@ -92,11 +92,13 @@
             .acquireTokenSilent(accessTokenRequest)
             .then(function (accessTokenResponse) {
                 // Acquire token silent success
+                displayOutput("Silent token acquisition successful.");
                 let accessToken = accessTokenResponse.accessToken;
 
                 getOpenAIResponse(prompt, deploymentId, accessToken);
             })
             .catch(function (error) {
+                displayOutput("Silent token acquisition fails. Acquiring token using popup.");
                 //Acquire token silent failure, and send an interactive request
                 //if (error instanceof InteractionRequiredAuthError) {
                     msalInstance
