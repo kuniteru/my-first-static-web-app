@@ -25,6 +25,10 @@
         const body = {
             messages: [
                 {
+                    role: "system",
+                    content: "あなたはアシスタントです。"
+                },
+                {
                     role: "user",
                     content: prompt
                 }
@@ -73,7 +77,7 @@
         const month = today.getMonth() + 1; // 月は0から始まるため、1を加算
         const date = today.getDate();
 
-        prompt = `${month}月${date}日に起こった過去の出来事は？`;
+        prompt = `${month}月${date}日にあった過去の出来事は？`;
         deploymentId = "gpt-4o-mini-mdl";
         getOpenAIResponse(prompt, deploymentId, accessToken);
     }
