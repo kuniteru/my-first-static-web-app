@@ -101,14 +101,15 @@
             } else {
                 const account = msalInstance.getAllAccounts()[0];
                 const accounts = msalInstance.getAllAccounts().length;
+                const activeAccount = msalInstance.getActiveAccount();
                 displayOutput("acc: " + accounts);
                 if (accounts > 0) {
-                    displayOutput("account: " + account.email);
+                    displayOutput("account: " + account + ", active: " + activeAccount);
                 }
                 const accessTokenRequest = {
                     scopes: ["openid", "profile", "email", "offline_access", "api://" + clientId + "/Api.Call"],
-                    //account: account.email,
-                    prompt: 'select_account'
+                    account: account.email,
+                    //prompt: 'select_account'
                 };
 
                 msalInstance
