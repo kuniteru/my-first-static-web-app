@@ -41,7 +41,11 @@
 
         function displayOutput(text, replace = false) {
             const output = document.getElementById("output");
-            output.innerText = output.textContent + "\n" + text;
+            if (replace) {
+                output.innerText = text;
+            } else {
+                output.innerText = output.innerText + "\n" + text;
+            }
         }
 
         function getOpenAIResponse(prompt, deploymentId) {
@@ -99,7 +103,7 @@
                 const accounts = msalInstance.getAllAccounts().length;
                 displayOutput("acc: " + accounts);
                 if (accounts > 0) {
-                    displayOutput("account: " + account);
+                    displayOutput("account: " + account.username);
                 }
                 const accessTokenRequest = {
                     scopes: ["openid", "profile", "email", "offline_access", "api://" + clientId + "/Api.Call"],
