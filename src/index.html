@@ -85,7 +85,7 @@
         const msalConfig = {
             auth: {
                 clientId: clientId,
-                //authority: "https://login.microsoftonline.com/" + tenantId
+                authority: "https://login.microsoftonline.com/" + tenantId
             },
             cache: {
                 cacheLocation: "localStorage",
@@ -98,6 +98,7 @@
             const redirectResponse = await msalInstance.handleRedirectPromise();
             if (redirectResponse !== null) {
                 accessToken = redirectResponse.accessToken;
+                displayOutput("(redirectResponse != null) accessToken: " + accessToken);
             } else {
                 const accounts = msalInstance.getAllAccounts();
                 //const account = accounts[0];
@@ -114,6 +115,7 @@
                     .acquireTokenSilent(accessTokenRequest)
                     .then(function (accessTokenResponse) {
                         accessToken = accessTokenResponse.accessToken;
+                        displayOutput("acquireTokenSilent() accessToken: " + accessToken);
                     })
                     .catch(function (error) {
                         msalInstance.acquireTokenRedirect(accessTokenRequest);
