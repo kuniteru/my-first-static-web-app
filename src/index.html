@@ -104,7 +104,7 @@
                 const activeAccount = msalInstance.getActiveAccount();
                 displayOutput("acc: " + accounts);
                 if (accounts > 0) {
-                    displayOutput("account: " + account + ", active: " + activeAccount);
+                    displayOutput("account: " + account.email + ", active: " + activeAccount.email);
                 }
                 const accessTokenRequest = {
                     scopes: ["openid", "profile", "email", "offline_access", "api://" + clientId + "/Api.Call"],
