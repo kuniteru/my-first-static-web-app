@@ -85,7 +85,7 @@
         const msalConfig = {
             auth: {
                 clientId: clientId,
-                authority: "https://login.microsoftonline.com/" + tenantId
+                //authority: "https://login.microsoftonline.com/" + tenantId
             },
             cache: {
                 cacheLocation: "localStorage",
@@ -100,14 +100,8 @@
                 accessToken = redirectResponse.accessToken;
             } else {
                 const account = msalInstance.getAllAccounts()[0];
-                const accounts = msalInstance.getAllAccounts().length;
-                const activeAccount = msalInstance.getActiveAccount();
-                displayOutput("acc: " + accounts);
                 if (accounts > 0) {
                     displayOutput("getAllAccounts(): " + JSON.stringify(msalInstance.getAllAccounts()));
-                    displayOutput("getActiveAccount(): " + JSON.stringify(msalInstance.getActiveAccount()));
-                    displayOutput("account: " + account.username);
-                    displayOutput("active: " + activeAccount.username);
                 }
                 const accessTokenRequest = {
                     scopes: ["openid", "profile", "email", "offline_access", "api://" + clientId + "/Api.Call"],
