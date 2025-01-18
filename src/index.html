@@ -9,82 +9,152 @@
 </head>
 
 <body>
+    <label for="prompt">Input:</label>
+    <textarea id="prompt" placeholder="Enter your text here"></textarea>
+    <button id="submit" type="submit">Submit</button>
     <pre id="output"></pre>
 
     <script src="https://alcdn.msauth.net/browser/2.35.0/js/msal-browser.min.js"></script>
     <script>
-    function displayOutput(text) {
-        const output = document.getElementById("output");
-        output.innerText = output.textContent + "\n" + text;
-    }
-    
-    function getOpenAIResponse(prompt, deploymentId, accessToken) {
-        const endpoint = "https://test001-apim.azure-api.net";
-        const openai_api_version = "2023-07-01-preview"
+        // https://learn.microsoft.com/ja-jp/entra/identity-platform/msal-js-sso
+        // https://learn.microsoft.com/ja-jp/entra/identity-platform/scenario-spa-sign-in?tabs=javascript2
+        // https://learn.microsoft.com/ja-jp/entra/identity-platform/scenario-spa-acquire-token?tabs=javascript2
+        function displayOutput(text) {
+            const output = document.getElementById("output");
+            output.innerText = output.textContent + "\n" + text;
+        }
 
-        const body = {
-            messages: [
-                {
-                    role: "system",
-                    content: "あなたはアシスタントです。"
+        const deploymentId = "gpt-4o-mini-mdl";
+
+        function getOpenAIResponse(prompt, deploymentId, accessToken) {
+            const endpoint = "https://test001-apim.azure-api.net";
+            const openai_api_version = "2023-07-01-preview"
+
+            const body = {
+                messages: [
+                    {
+                        role: "system",
+                        content: "あなたはアシスタントです。"
+                    },
+                    {
+                        role: "user",
+                        content: prompt
+                    }
+                ]
+            };
+
+            fetch(`${endpoint}/test001-oai-entra/openai/deployments/${deploymentId}/chat/completions?api-version=${openai_api_version}`, {
+                method: "POST",
+                headers: {
+                    Authorization: 'Bearer ' + accessToken,
+                    'Content-Type': 'application/json'
                 },
-                {
-                    role: "user",
-                    content: prompt
+                body: JSON.stringify(body)
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
                 }
-            ]
-        };
+                return response.json();
+            }).then(result => {
+                displayOutput(result.choices[0].message.content);
+            }).catch(error => {
+                displayOutput("There has been a problem with your fetch operation: " + error);
+            });
+        }
 
-        fetch(`${endpoint}/test001-oai-entra/openai/deployments/${deploymentId}/chat/completions?api-version=${openai_api_version}`, {
-            method: "POST",
-            headers: {
-                Authorization: 'Bearer ' + accessToken,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(body)
-        }).then(response => {
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
-            return response.json();
-        }).then(result => {
-            displayOutput(result.choices[0].message.content);
-        }).catch(error => {
-            displayOutput("There has been a problem with your fetch operation: " + error);
-        });
-    }
-
-    async function executeSilentRequest() {
-        // MSALの設定
+        // MSAL.js v2 exposes several account APIs, logic to determine which account to use is the responsibility of the developer
         const msalConfig = {
             auth: {
                 clientId: "96e70f3b-cc1f-424a-bc81-3e7dcdc09ed5",
-                authority: "https://login.microsoftonline.com/5e3960d0-e0b5-42d4-a532-406c36d40ed1"
+                authority: "https://login.microsoftonline.com/5e3960d0-e0b5-42d4-a532-406c36d40ed1",
+                //redirectUri: "https://ashy-wave-00dc01500.4.azurestaticapps.net/index2.html"
+            },
+            /*
+            cache: {
+                cacheLocation: "localStorage",
+                storeAuthStateInCookie: false
             }
-        };
-
-        const silentRequest = {
-            scopes: ["openid", "profile", "email", "offline_access", "api://96e70f3b-cc1f-424a-bc81-3e7dcdc09ed5/Api.Call"],
-            //loginHint: "asami@pnop.co.jp"
-            //sid: sid
+            */
         };
 
         const msalInstance = new msal.PublicClientApplication(msalConfig);
-        const loginResponse = await msalInstance.loginPopup(silentRequest);
-        const accessToken = loginResponse.accessToken;
 
-        // 今日の月日を取得
+        async function handleRedirect(prompt) {
+            const redirectResponse = await msalInstance.handleRedirectPromise();
+            if (redirectResponse !== null) {
+                getOpenAIResponse(prompt, deploymentId, redirectResponse.accessToken);
+            } else {
+                const account = msalInstance.getAllAccounts()[0];
+                const accessTokenRequest = {
+                    scopes: ["openid", "profile", "email", "offline_access", "api://96e70f3b-cc1f-424a-bc81-3e7dcdc09ed5/Api.Call"],
+                    account: account,
+                    //prompt: 'select_account'
+                };
+
+                msalInstance
+                    .acquireTokenSilent(accessTokenRequest)
+                    .then(function (accessTokenResponse) {
+                        // Acquire token silent success
+                        displayOutput("Silent token acquisition successful.");
+                        let accessToken = accessTokenResponse.accessToken;
+
+                        getOpenAIResponse(prompt, deploymentId, accessToken);
+                    })
+                    .catch(function (error) {
+                        displayOutput("Silent token acquisition fails. Acquiring token using popup or redirect. \n" + error);
+                        //Acquire token silent failure, and send an interactive request
+                        //if (error instanceof InteractionRequiredAuthError) {
+                        msalInstance.acquireTokenRedirect(accessTokenRequest);
+                        //
+                    });
+            }
+        }
+
+        // promptの初期値を設定
         const today = new Date();
         const month = today.getMonth() + 1; // 月は0から始まるため、1を加算
         const date = today.getDate();
+        document.getElementById("prompt").value = `${month}月${date}日にあった過去の出来事は？`;
 
-        prompt = `${month}月${date}日にあった過去の出来事は？`;
-        deploymentId = "gpt-4o-mini-mdl";
-        getOpenAIResponse(prompt, deploymentId, accessToken);
-    }
+        document.addEventListener("DOMContentLoaded", function () {
+            var button = document.getElementById("submit");
+            button.addEventListener("click", function () {
+                alert("ボタンがクリックされました！");
 
-    executeSilentRequest();
+                handleRedirect(document.getElementById("prompt").value);
+            });
+        });
+
+        /*
+        msalInstance
+            .acquireTokenSilent(accessTokenRequest)
+            .then(function (accessTokenResponse) {
+                // Acquire token silent success
+                displayOutput("Silent token acquisition successful.");
+                let accessToken = accessTokenResponse.accessToken;
+
+                getOpenAIResponse(prompt, deploymentId, accessToken);
+            })
+            .catch(function (error) {
+                displayOutput("Silent token acquisition fails. Acquiring token using popup or redirect. \n" + error);
+                //Acquire token silent failure, and send an interactive request
+                //if (error instanceof InteractionRequiredAuthError) {
+                    msalInstance
+                        .acquireTokenPopup(accessTokenRequest)
+                        .then(function (accessTokenResponse) {
+                            // Acquire token interactive success
+                            let accessToken = accessTokenResponse.accessToken;
+
+                            getOpenAIResponse(accessToken);
+                        })
+                        .catch(function (error) {
+                            // Acquire token interactive failure
+                            console.log(error);
+                        });
+                //}
+            });
+        */
     </script>
-
 </body>
+
 </html>
