@@ -1,16 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
-    <title>Vanilla JavaScript App</title>
+    <title>Entra ID Auth Java Script Sample</title>
+    <style>
+        #prompt {
+            width: 80%;
+            height: 3em;
+        }
+    </style>
 </head>
 
 <body>
-    <label for="prompt">Input:</label>
-    <textarea id="prompt" placeholder="Enter your text here"></textarea>
+    <textarea id="prompt" placeholder="Enter your prompt here"></textarea>
     <button id="submit" type="submit">Submit</button>
     <pre id="output"></pre>
 
@@ -78,11 +83,12 @@
         };
 
         const msalInstance = new msal.PublicClientApplication(msalConfig);
+        let accessToken = "";
 
         async function handleRedirect(prompt) {
             const redirectResponse = await msalInstance.handleRedirectPromise();
             if (redirectResponse !== null) {
-                getOpenAIResponse(prompt, deploymentId, redirectResponse.accessToken);
+                //getOpenAIResponse(prompt, deploymentId, redirectResponse.accessToken);
             } else {
                 const account = msalInstance.getAllAccounts()[0];
                 const accessTokenRequest = {
@@ -96,9 +102,9 @@
                     .then(function (accessTokenResponse) {
                         // Acquire token silent success
                         displayOutput("Silent token acquisition successful.");
-                        let accessToken = accessTokenResponse.accessToken;
+                        accessToken = accessTokenResponse.accessToken;
 
-                        getOpenAIResponse(prompt, deploymentId, accessToken);
+                        //getOpenAIResponse(prompt, deploymentId, accessToken);
                     })
                     .catch(function (error) {
                         displayOutput("Silent token acquisition fails. Acquiring token using popup or redirect. \n" + error);
@@ -110,6 +116,8 @@
             }
         }
 
+        handleRedirect();
+
         // promptの初期値を設定
         const today = new Date();
         const month = today.getMonth() + 1; // 月は0から始まるため、1を加算
@@ -119,9 +127,8 @@
         document.addEventListener("DOMContentLoaded", function () {
             var button = document.getElementById("submit");
             button.addEventListener("click", function () {
-                alert("ボタンがクリックされました！");
-
-                handleRedirect(document.getElementById("prompt").value);
+                //handleRedirect(document.getElementById("prompt").value);
+                getOpenAIResponse(document.getElementById("prompt").value, deploymentId, accessToken);
             });
         });
 
