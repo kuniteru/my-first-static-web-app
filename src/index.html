@@ -115,7 +115,6 @@
                     .acquireTokenSilent(accessTokenRequest)
                     .then(function (accessTokenResponse) {
                         accessToken = accessTokenResponse.accessToken;
-                        displayOutput("acquireTokenSilent() accessToken: " + accessToken);
                     })
                     .catch(function (error) {
                         msalInstance.acquireTokenRedirect(accessTokenRequest);
