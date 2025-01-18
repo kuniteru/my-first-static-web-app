@@ -104,6 +104,8 @@
                 const activeAccount = msalInstance.getActiveAccount();
                 displayOutput("acc: " + accounts);
                 if (accounts > 0) {
+                    displayOutput("getAllAccounts(): " + JSON.stringify(msalInstance.getAllAccounts()));
+                    displayOutput("getActiveAccount(): " + JSON.stringify(msalInstance.getActiveAccount()));
                     displayOutput("account: " + account.username);
                     displayOutput("active: " + activeAccount.username);
                 }
