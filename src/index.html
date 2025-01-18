@@ -24,18 +24,19 @@
         // https://learn.microsoft.com/ja-jp/entra/identity-platform/msal-js-sso
         // https://learn.microsoft.com/ja-jp/entra/identity-platform/scenario-spa-sign-in?tabs=javascript2
         // https://learn.microsoft.com/ja-jp/entra/identity-platform/scenario-spa-acquire-token?tabs=javascript2
+
+        const deploymentId = "gpt-4o-mini-mdl";
+        const endpoint = "https://test001-apim.azure-api.net";
+        const openai_api_version = "2023-07-01-preview"
+        
+        let accessToken = "";
+
         function displayOutput(text) {
             const output = document.getElementById("output");
             output.innerText = output.textContent + "\n" + text;
         }
 
-        const deploymentId = "gpt-4o-mini-mdl";
-        let accessToken = "";
-
         function getOpenAIResponse(prompt, deploymentId) {
-            const endpoint = "https://test001-apim.azure-api.net";
-            const openai_api_version = "2023-07-01-preview"
-
             const body = {
                 messages: [
                     {
@@ -83,7 +84,7 @@
             */
         };
 
-        async function handleRedirect(prompt) {
+        async function setAccessToken() {
             const msalInstance = new msal.PublicClientApplication(msalConfig);
             const redirectResponse = await msalInstance.handleRedirectPromise();
             if (redirectResponse !== null) {
@@ -116,7 +117,7 @@
             }
         }
 
-        handleRedirect();
+        setAccessToken();
 
         // promptの初期値を設定
         const today = new Date();
