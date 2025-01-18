@@ -9,6 +9,9 @@
 </head>
 
 <body>
+    <label for="prompt">Input:</label>
+    <textarea id="prompt" placeholder="Enter your text here"></textarea>
+    <button id="submit" type="submit">Submit</button>
     <pre id="output"></pre>
 
     <script src="https://alcdn.msauth.net/browser/2.35.0/js/msal-browser.min.js"></script>
@@ -20,6 +23,8 @@
             const output = document.getElementById("output");
             output.innerText = output.textContent + "\n" + text;
         }
+
+        const deploymentId = "gpt-4o-mini-mdl";
 
         function getOpenAIResponse(prompt, deploymentId, accessToken) {
             const endpoint = "https://test001-apim.azure-api.net";
@@ -62,55 +67,63 @@
             auth: {
                 clientId: "96e70f3b-cc1f-424a-bc81-3e7dcdc09ed5",
                 authority: "https://login.microsoftonline.com/5e3960d0-e0b5-42d4-a532-406c36d40ed1",
-                redirectUri: "https://ashy-wave-00dc01500.4.azurestaticapps.net/index2.html"
+                //redirectUri: "https://ashy-wave-00dc01500.4.azurestaticapps.net/index2.html"
             },
+            /*
             cache: {
                 cacheLocation: "localStorage",
                 storeAuthStateInCookie: false
             }
+            */
         };
 
         const msalInstance = new msal.PublicClientApplication(msalConfig);
 
-        const account = msalInstance.getAllAccounts()[0];
+        async function handleRedirect(prompt) {
+            const redirectResponse = await msalInstance.handleRedirectPromise();
+            if (redirectResponse !== null) {
+                getOpenAIResponse(prompt, deploymentId, redirectResponse.accessToken);
+            } else {
+                const account = msalInstance.getAllAccounts()[0];
+                const accessTokenRequest = {
+                    scopes: ["openid", "profile", "email", "offline_access", "api://96e70f3b-cc1f-424a-bc81-3e7dcdc09ed5/Api.Call"],
+                    account: account,
+                    //prompt: 'select_account'
+                };
 
-        const accessTokenRequest = {
-            scopes: ["openid", "profile", "email", "offline_access", "api://96e70f3b-cc1f-424a-bc81-3e7dcdc09ed5/Api.Call"],
-            account: account,
-            //prompt: 'select_account'
-        };
+                msalInstance
+                    .acquireTokenSilent(accessTokenRequest)
+                    .then(function (accessTokenResponse) {
+                        // Acquire token silent success
+                        displayOutput("Silent token acquisition successful.");
+                        let accessToken = accessTokenResponse.accessToken;
 
-        // 今日の月日を取得
+                        getOpenAIResponse(prompt, deploymentId, accessToken);
+                    })
+                    .catch(function (error) {
+                        displayOutput("Silent token acquisition fails. Acquiring token using popup or redirect. \n" + error);
+                        //Acquire token silent failure, and send an interactive request
+                        //if (error instanceof InteractionRequiredAuthError) {
+                        msalInstance.acquireTokenRedirect(accessTokenRequest);
+                        //
+                    });
+            }
+        }
+
+        // promptの初期値を設定
         const today = new Date();
         const month = today.getMonth() + 1; // 月は0から始まるため、1を加算
         const date = today.getDate();
+        document.getElementById("prompt").value = `${month}月${date}日にあった過去の出来事は？`;
 
-        prompt = `${month}月${date}日にあった過去の出来事は？`;
-        deploymentId = "gpt-4o-mini-mdl";
+        document.addEventListener("DOMContentLoaded", function () {
+            var button = document.getElementById("submit");
+            button.addEventListener("click", function () {
+                alert("ボタンがクリックされました！");
 
-        const redirectResponse = await msalInstance.handleRedirectPromise();
-        if (redirectResponse !== null) {
-            getOpenAIResponse(prompt, deploymentId, redirectResponse.accessToken);
-        } else {
-            const account = msalInstance.getAllAccounts()[0];
-
-            msalInstance
-                .acquireTokenSilent(accessTokenRequest)
-                .then(function (accessTokenResponse) {
-                    // Acquire token silent success
-                    displayOutput("Silent token acquisition successful.");
-                    let accessToken = accessTokenResponse.accessToken;
-
-                    getOpenAIResponse(prompt, deploymentId, accessToken);
-                })
-                .catch(function (error) {
-                    displayOutput("Silent token acquisition fails. Acquiring token using popup or redirect. \n" + error);
-                    //Acquire token silent failure, and send an interactive request
-                    //if (error instanceof InteractionRequiredAuthError) {
-                        msalInstance.acquireTokenRedirect(accessTokenRequest);
-                    //
-                });
-        }
+                handleRedirect(document.getElementById("prompt").value);
+            });
+        });
 
         /*
         msalInstance
