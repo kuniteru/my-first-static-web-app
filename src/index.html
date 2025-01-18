@@ -103,12 +103,12 @@
                 const accounts = msalInstance.getAllAccounts().length;
                 displayOutput("acc: " + accounts);
                 if (accounts > 0) {
-                    displayOutput("account: " + account.username);
+                    displayOutput("account: " + account.email);
                 }
                 const accessTokenRequest = {
                     scopes: ["openid", "profile", "email", "offline_access", "api://" + clientId + "/Api.Call"],
-                    account: account,
-                    //prompt: 'select_account'
+                    //account: account.email,
+                    prompt: 'select_account'
                 };
 
                 msalInstance
