@@ -27,11 +27,19 @@
 
         const deploymentId = "gpt-4o-mini-mdl";
         const endpoint = "https://test001-apim.azure-api.net";
-        const openai_api_version = "2023-07-01-preview"
+        const openai_api_version = "2023-07-01-preview";
+        const tenantId = "5e3960d0-e0b5-42d4-a532-406c36d40ed1";
+        const clientId = "96e70f3b-cc1f-424a-bc81-3e7dcdc09ed5";
         
+        // promptの初期値
+        const today = new Date();
+        const month = today.getMonth() + 1; // 月は0から始まるため、1を加算
+        const date = today.getDate();
+        document.getElementById("prompt").value = `${month}月${date}日にあった過去の出来事は？`;
+
         let accessToken = "";
 
-        function displayOutput(text) {
+        function displayOutput(text, replace = false) {
             const output = document.getElementById("output");
             output.innerText = output.textContent + "\n" + text;
         }
@@ -63,7 +71,7 @@
                 }
                 return response.json();
             }).then(result => {
-                displayOutput(result.choices[0].message.content);
+                displayOutput(result.choices[0].message.content, true);
             }).catch(error => {
                 displayOutput("There has been a problem with your fetch operation: " + error);
             });
@@ -72,9 +80,8 @@
         // MSAL.js v2 exposes several account APIs, logic to determine which account to use is the responsibility of the developer
         const msalConfig = {
             auth: {
-                clientId: "96e70f3b-cc1f-424a-bc81-3e7dcdc09ed5",
-                authority: "https://login.microsoftonline.com/5e3960d0-e0b5-42d4-a532-406c36d40ed1",
-                //redirectUri: "https://ashy-wave-00dc01500.4.azurestaticapps.net/index2.html"
+                clientId: clientId,
+                authority: "https://login.microsoftonline.com/" + tenantId
             },
             /*
             cache: {
@@ -89,11 +96,10 @@
             const redirectResponse = await msalInstance.handleRedirectPromise();
             if (redirectResponse !== null) {
                 accessToken = redirectResponse.accessToken;
-                //getOpenAIResponse(prompt, deploymentId, redirectResponse.accessToken);
             } else {
                 const account = msalInstance.getAllAccounts()[0];
                 const accessTokenRequest = {
-                    scopes: ["openid", "profile", "email", "offline_access", "api://96e70f3b-cc1f-424a-bc81-3e7dcdc09ed5/Api.Call"],
+                    scopes: ["openid", "profile", "email", "offline_access", "api://" + clientId + "/Api.Call"],
                     account: account,
                     //prompt: 'select_account'
                 };
@@ -101,67 +107,22 @@
                 msalInstance
                     .acquireTokenSilent(accessTokenRequest)
                     .then(function (accessTokenResponse) {
-                        // Acquire token silent success
-                        displayOutput("Silent token acquisition successful.");
                         accessToken = accessTokenResponse.accessToken;
-
-                        //getOpenAIResponse(prompt, deploymentId, accessToken);
                     })
                     .catch(function (error) {
-                        displayOutput("Silent token acquisition fails. Acquiring token using popup or redirect. \n" + error);
-                        //Acquire token silent failure, and send an interactive request
-                        //if (error instanceof InteractionRequiredAuthError) {
                         msalInstance.acquireTokenRedirect(accessTokenRequest);
-                        //
                     });
             }
         }
 
         setAccessToken();
 
-        // promptの初期値を設定
-        const today = new Date();
-        const month = today.getMonth() + 1; // 月は0から始まるため、1を加算
-        const date = today.getDate();
-        document.getElementById("prompt").value = `${month}月${date}日にあった過去の出来事は？`;
-
         document.addEventListener("DOMContentLoaded", function () {
             var button = document.getElementById("submit");
             button.addEventListener("click", function () {
-                //handleRedirect(document.getElementById("prompt").value);
                 getOpenAIResponse(document.getElementById("prompt").value, deploymentId);
             });
         });
-
-        /*
-        msalInstance
-            .acquireTokenSilent(accessTokenRequest)
-            .then(function (accessTokenResponse) {
-                // Acquire token silent success
-                displayOutput("Silent token acquisition successful.");
-                let accessToken = accessTokenResponse.accessToken;
-
-                getOpenAIResponse(prompt, deploymentId, accessToken);
-            })
-            .catch(function (error) {
-                displayOutput("Silent token acquisition fails. Acquiring token using popup or redirect. \n" + error);
-                //Acquire token silent failure, and send an interactive request
-                //if (error instanceof InteractionRequiredAuthError) {
-                    msalInstance
-                        .acquireTokenPopup(accessTokenRequest)
-                        .then(function (accessTokenResponse) {
-                            // Acquire token interactive success
-                            let accessToken = accessTokenResponse.accessToken;
-
-                            getOpenAIResponse(accessToken);
-                        })
-                        .catch(function (error) {
-                            // Acquire token interactive failure
-                            console.log(error);
-                        });
-                //}
-            });
-        */
     </script>
 </body>
 
