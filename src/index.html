@@ -98,18 +98,16 @@
             const redirectResponse = await msalInstance.handleRedirectPromise();
             if (redirectResponse !== null) {
                 accessToken = redirectResponse.accessToken;
-                displayOutput("(redirectResponse != null) accessToken: " + accessToken);
             } else {
                 let accessTokenRequest = {
                     scopes: ["openid", "profile", "email", "offline_access", "api://" + clientId + "/Api.Call"],
-                    //account: accounts[0].username,
-                    //prompt: 'select_account'
                 };
 
                 const accounts = msalInstance.getAllAccounts();
-                //const account = accounts[0];
-                if (accounts.length > 0) {
-                    displayOutput("getAllAccounts(): " + JSON.stringify(accounts));
+
+                if (accounts.length > 1) {
+                    accessTokenRequest.prompt = 'select_account';
+                } else if (accounts.length > 0) {
                     accessTokenRequest.account = accounts[0].username;
                 }
 
