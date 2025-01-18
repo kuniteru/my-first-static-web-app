@@ -100,16 +100,18 @@
                 accessToken = redirectResponse.accessToken;
                 displayOutput("(redirectResponse != null) accessToken: " + accessToken);
             } else {
+                let accessTokenRequest = {
+                    scopes: ["openid", "profile", "email", "offline_access", "api://" + clientId + "/Api.Call"],
+                    //account: accounts[0].username,
+                    //prompt: 'select_account'
+                };
+
                 const accounts = msalInstance.getAllAccounts();
                 //const account = accounts[0];
                 if (accounts.length > 0) {
                     displayOutput("getAllAccounts(): " + JSON.stringify(accounts));
+                    accessTokenRequest.account = accounts[0].username;
                 }
-                const accessTokenRequest = {
-                    scopes: ["openid", "profile", "email", "offline_access", "api://" + clientId + "/Api.Call"],
-                    account: accounts[0].username,
-                    //prompt: 'select_account'
-                };
 
                 msalInstance
                     .acquireTokenSilent(accessTokenRequest)
